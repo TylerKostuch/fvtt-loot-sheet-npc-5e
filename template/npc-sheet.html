@@ -130,14 +130,22 @@
 		
         <!-- BODY -->
         <section class="sheet-content content">
-            <nav class="sheet-navigation tabs" data-group="primary">
-                <a class="item active" data-tab="inventory">Inventory</a>
-                <a class="item" data-tab="biography">Biography</a>
+            <nav class="sheet-tabs tabs" data-group="primary">
+                <a class="item" data-tab="inventory">Inventory</a>
+                <a class="item active" data-tab="notes">{{localize "DCC.Notes"}}</a>
             </nav>
 
             <section class="sheet-body">
-                <div class="tab" data-tab="biography" data-group="primary">
-                    {{editor content=data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
+                {{!-- Notes Tab --}}
+                <div class="tab" data-group="primary" data-tab="notes">
+                    <h4 class="notes-label">{{localize "DCC.Notes"}}</h4>
+                    <div class="notes">
+                        {{editor content=data.details.notes.value
+                        target="data.details.notes.value"
+                        button=true
+                        owner=owner
+                        editable=editable}}
+                    </div>
                 </div>
     
                 <div class="tab" data-tab="inventory" data-group="primary">
@@ -150,7 +158,7 @@
                                 </h3></span>
                                 {{#each data.currency as |c i|}}
                                 <span>
-                                    <label class="denomination {{i}}">{{ lookup ../config.currencies i }}</label>
+                                    <label class="denomination {{i}}">{{localize (lookup ../config.currencies i)}}</label>
                                     <input type="text" name="data.currency.{{i}}.value" value="{{c.value}}" data-dtype="{{c.type}}"/>
                                 </span>
                                 {{/each}}
@@ -206,7 +214,7 @@
                                             <i class="fas fa-weight-hanging" title="Weight"></i> {{lootsheetweight item.data.weight}}{{lootsheetstackweight item.data.weight item.data.quantity}}
                                         </div>
                                         <div class="item-price">
-                                            <i class="fas fa-coins" title="Price (in gp)"></i> {{ lootsheetprice item.data.price ../../priceModifier }}
+                                            <i class="fas fa-coins" title="Price (in gp)"></i> {{ lootsheetprice item.data.value ../../priceModifier }}
                                         </div>
                                         
                                         <div class="item-controls">

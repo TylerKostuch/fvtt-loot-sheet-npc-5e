@@ -1,0 +1,24 @@
+<div data-transfer="{{transfer}}">
+    <p>Use this slider to increase or decrease the price of all items in this inventory.
+        <i class='fa fa-question-circle'
+           title='This uses a percentage factor where 100% is the current price, 0% is 0, and 200% is double the price.'></i>
+    </p>
+    <p>
+        <input name="price-modifier-percent" id="price-modifier-percent" type="range" min="0" max="200"
+               value="{{priceModifier}}" class="slider"></p>
+    <p>
+        <label>Percentage:</label>
+        <input type=number min="0" max="200" value="{{priceModifier}}" id="price-modifier-percent-display">
+    </p>
+    <script>
+        var pmSlider = document.getElementById("price-modifier-percent");
+        var pmDisplay = document.getElementById("price-modifier-percent-display");
+        pmDisplay.value = pmSlider.value;
+        pmSlider.oninput = function () {
+            pmDisplay.value = this.value;
+        };
+        pmDisplay.oninput = function () {
+            pmSlider.value = this.value;
+        };
+    </script>
+</div>
