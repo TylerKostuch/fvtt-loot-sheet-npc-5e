@@ -3,9 +3,11 @@ import DCC from "../../../../../systems/dcc/module/config.js";
 export default class CurrencyHelper {
     static convertCurrencyObjectToCopper(currencies) {
         let total = 0
-        Object.keys(currencies).forEach(coin => {
-            total += currencies[coin] * DCC.currencyValue[coin]
-        });
+        if(currencies) {
+            Object.keys(currencies).forEach(coin => {
+                total += currencies[coin] * DCC.currencyValue[coin]
+            });
+        }
 
         return total
     }
