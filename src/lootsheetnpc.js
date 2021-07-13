@@ -36,6 +36,12 @@ Hooks.once("init", () => {
         return options.inverse(this);
     });
 
+    Handlebars.registerHelper('ifgt', function (a, b, options) {
+        console.log('ifgt', a,b)
+        if (a > b) { return options.fn(this); }
+        return options.inverse(this);
+    });
+
     Handlebars.registerHelper('lootsheetprice', function (basePrice, modifier) {
         const modifiedPrice = CurrencyHelper.multiply(basePrice, modifier)
         return CurrencyHelper.convertCurrenciesToString(modifiedPrice)
@@ -98,7 +104,7 @@ Hooks.once("init", () => {
     function chatMessage(speaker, owner, message, item) {
         if (game.settings.get("fvtt-loot-sheet-npc-dcc", "buyChat")) {
             message = `
-            <div class="dnd5e chat-card item-card" data-actor-id="${owner._id}" data-item-id="${item._id}">
+            <div class="dnd5e chat-card item-card" data-actor-id="${owner.id}" data-item-id="${item.id}">
                 <header class="card-header flexrow">
                     <img src="${item.img}" title="${item.name}" width="36" height="36">
                     <h3 class="item-name">${item.name}</h3>
@@ -110,7 +116,7 @@ Hooks.once("init", () => {
             </div>
             `;
             ChatMessage.create({
-                user: game.user._id,
+                user: game.user.id,
                 speaker: {
                     actor: speaker,
                     alias: speaker.name
@@ -136,16 +142,16 @@ Hooks.once("init", () => {
         const results = [];
         for (let i of items) {
             let itemId = i.itemId;
-            let quantity = i.quantity;
-            let item = source.getEmbeddedEntity("OwnedItem", itemId);
+            let quantity = parseInt(i.quantity);
+            let item = source.getEmbeddedDocument("Item", itemId);
 
             // Move all items if we select more than the quantity.
-            if (item.data.quantity < quantity) {
-                quantity = item.data.quantity;
+            if (item.data.data.quantity < quantity) {
+                quantity = item.data.data.quantity;
             }
 
             let newItem = duplicate(item);
-            const update = { _id: itemId, "data.quantity": item.data.quantity - quantity };
+            const update = { id: itemId, "data.quantity": parseInt(item.data.data.quantity) - quantity };
 
             if (update["data.quantity"] === 0) {
                 deletes.push(itemId);
@@ -159,30 +165,40 @@ Hooks.once("init", () => {
                 item: newItem,
                 quantity: quantity
             });
-            let destItem = destination.data.items.find(i => i.name == newItem.name);
-            if (destItem === undefined) {
+
+
+            const nonstackableTypes = ['weapon', 'armor']
+            const isNonstackable = nonstackableTypes.find(x => x == newItem.type) !== undefined
+
+            // TODO: We really need to compare more than just the name here...
+            let destItem = destination.data.items.find(i => i.name === newItem.name);
+
+            if (isNonstackable || destItem === undefined) {
                 additions.push(newItem);
             } else {
-                //console.log("Existing Item");
-                destItem.data.quantity = Number(destItem.data.quantity) + Number(newItem.data.quantity);
+                destItem.data.data.quantity = Number(destItem.data.data.quantity) + Number(newItem.data.quantity);
                 destUpdates.push(destItem);
             }
         }
 
         if (deletes.length > 0) {
-            await source.deleteEmbeddedEntity("OwnedItem", deletes);
+            console.log('Delete from Source: ', deletes)
+            await source.deleteEmbeddedDocuments("Item", deletes);
         }
 
         if (updates.length > 0) {
-            await source.updateEmbeddedEntity("OwnedItem", updates);
+            console.log('Update Source: ', updates)
+            await source.updateEmbeddedDocuments("Item", updates);
         }
 
         if (additions.length > 0) {
-            await destination.createEmbeddedEntity("OwnedItem", additions);
+            console.log('Add to Destination: ', additions)
+            await destination.createEmbeddedDocuments("Item", additions);
         }
 
         if (destUpdates.length > 0) {
-            await destination.updateEmbeddedEntity("OwnedItem", destUpdates);
+            console.log('Update Destination: ', destUpdates)
+            await destination.updateEmbeddedDocuments("Item", destUpdates);
         }
 
         return results;
@@ -200,7 +216,7 @@ Hooks.once("init", () => {
     }
 
     async function transaction(seller, buyer, itemId, quantity) {
-        let sellItem = seller.getEmbeddedEntity("OwnedItem", itemId);
+        let sellItem = seller.getEmbeddedDocument("Item", itemId);
 
         // If the buyer attempts to buy more then what's in stock, buy all the stock.
         if (sellItem.data.quantity < quantity) {
@@ -424,7 +440,7 @@ Hooks.once("init", () => {
                 let message = `${u.data.name} receives: `;
                 message += msg.join(",");
                 ChatMessage.create({
-                    user: game.user._id,
+                    user: game.user.id,
                     speaker: {
                         actor: containerActor,
                         alias: containerActor.name
@@ -483,7 +499,7 @@ Hooks.once("init", () => {
             let message = `${looter.data.name} receives: `;
             message += msg.join(",");
             ChatMessage.create({
-                user: game.user._id,
+                user: game.user.id,
                 speaker: {
                     actor: containerActor,
                     alias: containerActor.name

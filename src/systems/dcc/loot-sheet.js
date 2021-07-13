@@ -69,7 +69,7 @@ export default class LootSheet extends DCCActorSheet {
         sheetData.totalPrice = CurrencyHelper.convertCopperToString(totalPrice);
         sheetData.totalQuantity = totalQuantity;
         sheetData.priceModifier = priceModifier;
-        sheetData.rolltables = game.tables.entities;
+        sheetData.rolltables = game.tables.contents;
         sheetData.lootCurrency = game.settings.get("fvtt-loot-sheet-npc-dcc", "lootCurrency");
         sheetData.lootAll = game.settings.get("fvtt-loot-sheet-npc-dcc", "lootAll");
 
@@ -536,8 +536,8 @@ export default class LootSheet extends DCCActorSheet {
             items: [item],
             processorId: targetGm.id
         };
-
-        if (targetItem.data.quantity === item.quantity) {
+        
+        if (targetItem.data.data.quantity === item.quantity) {
             console.log("LootSheet5e", "Sending loot request to " + targetGm.name, packet);
             game.socket.emit(config.SOCKET, packet);
             return;
@@ -940,6 +940,11 @@ export default class LootSheet extends DCCActorSheet {
                 items: [],
                 type: "weapon"
             },
+            armor: {
+                label: "Armors",
+                items: [],
+                type: "armor"
+            },
             equipment: {
                 label: "Equipment",
                 items: [],
@@ -981,6 +986,7 @@ export default class LootSheet extends DCCActorSheet {
 
                 // Features
                 if (i.type === "weapon") features.weapons.items.push(i);
+                else if (i.type === "armor") features.armor.items.push(i);
                 else if (i.type === "equipment") features.equipment.items.push(i);
                 else if (i.type === "consumable") features.consumables.items.push(i);
                 else if (i.type === "tool") features.tools.items.push(i);

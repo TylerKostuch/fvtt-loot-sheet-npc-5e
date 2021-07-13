@@ -14,14 +14,13 @@ export default class CurrencyHelper {
 
     static convertCurrenciesToString(currencies) {
         let total = ""
-        console.log(currencies)
         Object.keys(currencies).forEach(coin => {
             if(currencies[coin] > 0) {
                 total += `${currencies[coin]} ${coin} `
             }
         });
 
-        return total
+        return total === "" ? "0cp" : total
     }
 
     static convertCopperToCurrencyObject(copper) {

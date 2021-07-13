@@ -199,7 +199,6 @@
                                 {{/if}}
     
                                 {{#each section.items as |item iid|}}
-
                                     <li class="item flexrow" data-item-id="{{item._id}}">
                                         <div class="item-name flexrow rollable">
                                             <div class="item-image" style="background-image: url({{item.img}})"></div>
@@ -208,7 +207,9 @@
                                             </h4>
                                         </div>
                                         <div class="item-quantity">
-                                            <i class="fas fa-box" title="Quantity"></i> {{item.data.quantity}}
+                                            {{#ifgt item.data.quantity 1}}
+                                                <i class="fas fa-box" title="Quantity"></i> {{item.data.quantity}}
+                                            {{/ifgt}}
                                         </div>
                                         <div class="item-weight">
                                             <i class="fas fa-weight-hanging" title="Weight"></i> {{lootsheetweight item.data.weight}}{{lootsheetstackweight item.data.weight item.data.quantity}}
@@ -234,7 +235,6 @@
                                             {{/if}}
                                         </div>
                                     </li>
-                                
                                 {{/each}}
                             </ol>
                             {{/each}}
@@ -242,14 +242,7 @@
                         </div>
                     </div>
                 </div>
-
             </section>
-            
-            
-
-
         </section>
-
-        
     </section>
 </form>
