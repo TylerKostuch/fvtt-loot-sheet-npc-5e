@@ -950,25 +950,20 @@ export default class LootSheet extends DCCActorSheet {
                 items: [],
                 type: "equipment"
             },
-            consumables: {
-                label: "Consumables",
+            ammunition: {
+                label: "Ammunition",
                 items: [],
-                type: "consumable"
+                type: "ammunition"
             },
-            tools: {
-                label: "Tools",
+            mounts: {
+                label: "Mounts",
                 items: [],
-                type: "tool"
+                type: "mount"
             },
-            containers: {
-                label: "Containers",
+            treasure: {
+                label: "Treasure",
                 items: [],
-                type: "container"
-            },
-            loot: {
-                label: "Loot",
-                items: [],
-                type: "loot"
+                type: "treasure"
             },
         };
 
@@ -988,11 +983,10 @@ export default class LootSheet extends DCCActorSheet {
                 if (i.type === "weapon") features.weapons.items.push(i);
                 else if (i.type === "armor") features.armor.items.push(i);
                 else if (i.type === "equipment") features.equipment.items.push(i);
-                else if (i.type === "consumable") features.consumables.items.push(i);
-                else if (i.type === "tool") features.tools.items.push(i);
-                else if (["container", "backpack"].includes(i.type)) features.containers.items.push(i);
-                else if (i.type === "loot") features.loot.items.push(i);
-                else features.loot.items.push(i);
+                else if (i.type === "ammunition") features.ammunition.items.push(i);
+                else if (i.type === "mount") features.mounts.items.push(i);
+                else if (i.type === "treasure") features.treasure.items.push(i);
+                else features.equipment.items.push(i);
             }
         }
 

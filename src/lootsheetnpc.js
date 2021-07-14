@@ -37,7 +37,6 @@ Hooks.once("init", () => {
     });
 
     Handlebars.registerHelper('ifgt', function (a, b, options) {
-        console.log('ifgt', a,b)
         if (a > b) { return options.fn(this); }
         return options.inverse(this);
     });

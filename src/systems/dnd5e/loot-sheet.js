@@ -4,6 +4,18 @@ import config from "../../config.js";
 
 export default class LootSheet extends ActorSheet5eNPC {
     get template() {
+        Handlebars.registerHelper("debug", function(optionalValue) {
+            console.log("Current Context");
+            console.log("====================");
+            console.log(this);
+
+            if (optionalValue) {
+                console.log("Value");
+                console.log("====================");
+                console.log(optionalValue);
+            }
+        });
+
         // adding the #equals and #unequals handlebars helper
         Handlebars.registerHelper('equals', function (arg1, arg2, options) {
             return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
